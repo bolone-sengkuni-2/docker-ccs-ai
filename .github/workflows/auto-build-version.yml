@@ -66,7 +66,9 @@ jobs:
           # Remove the AI CLI tools line and fix the next line
           sed -i '/npm install -g @google\/gemini-cli @vibe-kit\/grok-cli @anthropic-ai\/claude-code \\/d' Dockerfile
           sed -i 's/^[[:space:]]*&& npm install -g @kaitranntt\/ccs/RUN npm install -g @kaitranntt\/ccs/' Dockerfile
-          echo "✅ Removed AI CLI tools from Dockerfile"
+          # Fix entrypoint.sh path (remove /docker/ prefix since context is already docker/)
+          sed -i 's|/docker/entrypoint.sh|./entrypoint.sh|g' Dockerfile
+          echo "✅ Patched Dockerfile successfully"
 
       - name: Set up Docker Buildx
         if: steps.check_version.outputs.should_build == 'true'
