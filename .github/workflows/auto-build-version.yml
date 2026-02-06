@@ -65,7 +65,7 @@ jobs:
           cd upstream_repo/${{ env.UPSTREAM_DOCKER_PATH }}
           # Remove the AI CLI tools line and fix the next line
           sed -i '/npm install -g @google\/gemini-cli @vibe-kit\/grok-cli @anthropic-ai\/claude-code \\/d' Dockerfile
-          sed -i 's/^  && npm install -g @kaitranntt\/ccs/RUN npm install -g @kaitranntt\/ccs/' Dockerfile
+          sed -i 's/^[[:space:]]*&& npm install -g @kaitranntt\/ccs/RUN npm install -g @kaitranntt\/ccs/' Dockerfile
           echo "✅ Removed AI CLI tools from Dockerfile"
 
       - name: Set up Docker Buildx
