@@ -59,6 +59,14 @@ jobs:
           git clone --depth 1 --branch ${{ steps.latest_release.outputs.version }} \
             https://github.com/${{ env.UPSTREAM_REPO }}.git upstream_repo
 
+      - name: Patch Dockerfile (remove AI CLI tools)
+        if: steps.check_version.outputs.should_build == 'true'
+        run: |
+          cd upstream_repo/${{ env.UPSTREAM_DOCKER_PATH }}
+          # Remove the AI CLI tools npm install line and its continuation
+          sed -i '/npm install -g @google\/gemini-cli @vibe-kit\/grok-cli @anthropic-ai\/claude-code \\/d' Dockerfile
+          echo "✅ Removed AI CLI tools from Dockerfile"
+
       - name: Set up Docker Buildx
         if: steps.check_version.outputs.should_build == 'true'
         uses: docker/setup-buildx-action@v3
@@ -86,6 +94,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./upstream_repo/${{ env.UPSTREAM_DOCKER_PATH }}
+          file: ./upstream_repo/${{ env.UPSTREAM_DOCKER_PATH }}/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
